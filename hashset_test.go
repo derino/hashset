@@ -1,8 +1,6 @@
 package hashset
 
 import (
-	"reflect"
-	"sort"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -24,10 +22,8 @@ func (y YourElement) Hash() string {
 	return y.id
 }
 
-type MyElementSet = HashSet[int, *MyElement]
-
 func TestHashSetWithPointerReceiver(t *testing.T) {
-	s := HashSet[int, *MyElement]{}
+	s := Set[int, *MyElement]{}
 	s.Add(&MyElement{id: 1})
 	s.Add(&MyElement{id: 2})
 	s.Add(&MyElement{id: 2})
@@ -44,18 +40,18 @@ func TestHashSetWithPointerReceiver(t *testing.T) {
 	assert.True(t, s.Has(&MyElement{id: 3}))
 
 	// Note that MyElement does not implement Hasher[int] (method Hash has pointer receiver)
-	// s := HashSet[int, MyElement]{}  // compile error
+	// s := Set[int, MyElement]{}  // compile error
 }
 
 func TestHashSetWithValueReceiverAndStringHashType(t *testing.T) {
-	s := HashSet[string, YourElement]{}
+	s := Set[string, YourElement]{}
 	s.Add(YourElement{id: "1"})
 	s.Add(YourElement{id: "2"})
 	s.Add(YourElement{id: "2"})
 	s.Add(YourElement{id: "3"})
 	assert.Equal(t, 3, len(s))
 
-	s2 := HashSet[string, *YourElement]{}
+	s2 := Set[string, *YourElement]{}
 	s2.Add(&YourElement{id: "1"})
 	s2.Add(&YourElement{id: "2"})
 	s2.Add(&YourElement{id: "2"})
@@ -64,15 +60,13 @@ func TestHashSetWithValueReceiverAndStringHashType(t *testing.T) {
 }
 
 func TestTypeAliasAndToList(t *testing.T) {
+	type MyElementSet = Set[int, *MyElement]
+
 	myElements := []*MyElement{{id: 1}, {id: 2}}
 	s := MyElementSet{}
 	for _, e := range myElements {
 		s.Add(e)
 	}
 
-	sList := s.ToList()
-	sort.Slice(sList, func(i, j int) bool {
-		return sList[i].id < sList[j].id
-	})
-	assert.True(t, reflect.DeepEqual(sList, myElements))
+	assert.ElementsMatch(t, myElements, s.ToList())
 }
