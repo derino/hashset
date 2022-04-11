@@ -71,6 +71,15 @@ func TestTypeAliasAndToList(t *testing.T) {
 	assert.ElementsMatch(t, myElements, s.ToList())
 }
 
+func TestNewSet(t *testing.T) {
+	elems := []*MyElement{{id: 1}, {id: 2}, {id: 2}, {id: 3}}
+	s := NewSet[int, *MyElement](elems)
+	assert.Equal(t, 3, len(s))
+	assert.True(t, s.Has(&MyElement{id: 1}))
+	assert.True(t, s.Has(&MyElement{id: 2}))
+	assert.True(t, s.Has(&MyElement{id: 3}))
+}
+
 func TestClone(t *testing.T) {
 	s := Set[int, *MyElement]{}
 	s.Add(&MyElement{id: 1})

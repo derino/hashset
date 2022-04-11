@@ -9,6 +9,15 @@ type Hasher[U comparable] interface {
 type Set[U comparable, T Hasher[U]] map[U]T
 
 // Add element to the set
+func NewSet[U comparable, T Hasher[U]](elems []T) Set[U, T] {
+	s := Set[U, T]{}
+	for _, elem := range elems {
+		s.Add(elem)
+	}
+	return s
+}
+
+// Add element to the set
 func (s Set[U, T]) Add(elem T) {
 	s[elem.Hash()] = elem
 }
