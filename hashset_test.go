@@ -70,3 +70,41 @@ func TestTypeAliasAndToList(t *testing.T) {
 
 	assert.ElementsMatch(t, myElements, s.ToList())
 }
+
+func TestClone(t *testing.T) {
+	s := Set[int, *MyElement]{}
+	s.Add(&MyElement{id: 1})
+	s.Add(&MyElement{id: 2})
+	s.Add(&MyElement{id: 3})
+
+	s2 := s.Clone()
+	assert.Equal(t, 3, len(s2))
+	assert.True(t, s2.Has(&MyElement{id: 1}))
+	assert.True(t, s2.Has(&MyElement{id: 2}))
+	assert.True(t, s2.Has(&MyElement{id: 3}))
+}
+
+func TestUnion(t *testing.T) {
+	s := Set[int, *MyElement]{}
+	s.Add(&MyElement{id: 1})
+	s.Add(&MyElement{id: 2})
+	s.Add(&MyElement{id: 3})
+
+	s2 := Set[int, *MyElement]{}
+	s.Add(&MyElement{id: 4})
+	s.Add(&MyElement{id: 3})
+
+	union := Union(s, s2)
+	assert.Equal(t, 4, len(union))
+	assert.True(t, union.Has(&MyElement{id: 1}))
+	assert.True(t, union.Has(&MyElement{id: 2}))
+	assert.True(t, union.Has(&MyElement{id: 3}))
+	assert.True(t, union.Has(&MyElement{id: 4}))
+
+	s.Union(s2)
+	assert.Equal(t, 4, len(s))
+	assert.True(t, s.Has(&MyElement{id: 1}))
+	assert.True(t, s.Has(&MyElement{id: 2}))
+	assert.True(t, s.Has(&MyElement{id: 3}))
+	assert.True(t, s.Has(&MyElement{id: 4}))
+}

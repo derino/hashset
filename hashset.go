@@ -32,3 +32,28 @@ func (s Set[U, T]) ToList() []T {
 	}
 	return list
 }
+
+// Creates a copy of the set
+func (s Set[U, T]) Clone() Set[U, T] {
+	clone := Set[U, T]{}
+	for k, v := range s {
+		clone[k] = v
+	}
+	return clone
+}
+
+// Update the set by making a union with the given set
+func (s Set[U, T]) Union(other Set[U, T]) {
+	for _, v := range other {
+		s.Add(v)
+	}
+}
+
+// Compute a union of the given two sets
+func Union[U comparable, T Hasher[U]](s1 Set[U, T], s2 Set[U, T]) Set[U, T] {
+	union := s1.Clone()
+	for _, v := range s2 {
+		union.Add(v)
+	}
+	return union
+}
