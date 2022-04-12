@@ -100,8 +100,8 @@ func TestUnion(t *testing.T) {
 	s.Add(&MyElement{id: 3})
 
 	s2 := Set[int, *MyElement]{}
-	s.Add(&MyElement{id: 4})
-	s.Add(&MyElement{id: 3})
+	s2.Add(&MyElement{id: 4})
+	s2.Add(&MyElement{id: 3})
 
 	union := Union(s, s2)
 	assert.Equal(t, 4, len(union))
@@ -116,4 +116,71 @@ func TestUnion(t *testing.T) {
 	assert.True(t, s.Has(&MyElement{id: 2}))
 	assert.True(t, s.Has(&MyElement{id: 3}))
 	assert.True(t, s.Has(&MyElement{id: 4}))
+}
+
+func TestIntersect(t *testing.T) {
+	s := Set[int, *MyElement]{}
+	s.Add(&MyElement{id: 1})
+	s.Add(&MyElement{id: 2})
+	s.Add(&MyElement{id: 3})
+
+	s2 := Set[int, *MyElement]{}
+	s2.Add(&MyElement{id: 4})
+	s2.Add(&MyElement{id: 3})
+
+	isect := Intersect(s, s2)
+	assert.Equal(t, 1, len(isect))
+	assert.True(t, isect.Has(&MyElement{id: 3}))
+
+	s.Intersect(s2)
+	assert.Equal(t, 1, len(s))
+	assert.True(t, s.Has(&MyElement{id: 3}))
+}
+
+func TestDifference(t *testing.T) {
+	s := Set[int, *MyElement]{}
+	s.Add(&MyElement{id: 1})
+	s.Add(&MyElement{id: 2})
+	s.Add(&MyElement{id: 3})
+
+	s2 := Set[int, *MyElement]{}
+	s2.Add(&MyElement{id: 4})
+	s2.Add(&MyElement{id: 3})
+
+	diff := Difference(s, s2)
+	assert.Equal(t, 2, len(diff))
+	assert.True(t, diff.Has(&MyElement{id: 1}))
+	assert.True(t, diff.Has(&MyElement{id: 2}))
+
+	s.Difference(s2)
+	assert.Equal(t, 2, len(s))
+	assert.True(t, s.Has(&MyElement{id: 1}))
+	assert.True(t, s.Has(&MyElement{id: 2}))
+}
+
+func TestIsSubset(t *testing.T) {
+	s := Set[int, *MyElement]{}
+	s.Add(&MyElement{id: 1})
+	s.Add(&MyElement{id: 2})
+	s.Add(&MyElement{id: 3})
+
+	s2 := Set[int, *MyElement]{}
+	s2.Add(&MyElement{id: 4})
+	s2.Add(&MyElement{id: 3})
+
+	s3 := Set[int, *MyElement]{}
+	s3.Add(&MyElement{id: 2})
+	s3.Add(&MyElement{id: 3})
+
+	empty := Set[int, *MyElement]{}
+
+	assert.True(t, empty.IsSubset(s))
+	assert.True(t, s.IsSubset(s))
+	assert.False(t, s.IsSubset(s2))
+	assert.False(t, s2.IsSubset(s))
+	assert.True(t, s3.IsSubset(s))
+	assert.False(t, s.IsSubset(s3))
+
+	assert.True(t, IsSubset(s3, s))
+	assert.False(t, IsSubset(s, s3))
 }

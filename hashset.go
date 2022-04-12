@@ -51,18 +51,72 @@ func (s Set[U, T]) Clone() Set[U, T] {
 	return clone
 }
 
-// Update the set by making a union with the given set
+// Update the set by taking the union with the given set
 func (s Set[U, T]) Union(other Set[U, T]) {
 	for _, v := range other {
 		s.Add(v)
 	}
 }
 
-// Compute a union of the given two sets
-func Union[U comparable, T Hasher[U]](s1 Set[U, T], s2 Set[U, T]) Set[U, T] {
+// Compute the union of the given two sets
+func Union[U comparable, T Hasher[U]](s1, s2 Set[U, T]) Set[U, T] {
 	union := s1.Clone()
 	for _, v := range s2 {
 		union.Add(v)
 	}
 	return union
+}
+
+// Update the set by taking the intersection with the given set
+func (s Set[U, T]) Intersect(other Set[U, T]) {
+	for k, v := range s {
+		_, ok := other[k]
+		if !ok {
+			s.Remove(v)
+		}
+	}
+}
+
+// Compute the intersection of the given two sets
+func Intersect[U comparable, T Hasher[U]](s1, s2 Set[U, T]) Set[U, T] {
+	intersection := Set[U, T]{}
+	for k, v := range s1 {
+		_, ok := s2[k]
+		if ok {
+			intersection.Add(v)
+		}
+	}
+	return intersection
+}
+
+// Update the set by taking the difference with the given set
+func (s Set[U, T]) Difference(other Set[U, T]) {
+	for k, v := range s {
+		_, ok := other[k]
+		if ok {
+			s.Remove(v)
+		}
+	}
+}
+
+// Compute the difference of the first set from the second one
+func Difference[U comparable, T Hasher[U]](s1, s2 Set[U, T]) Set[U, T] {
+	diff := Set[U, T]{}
+	for k, v := range s1 {
+		_, ok := s2[k]
+		if !ok {
+			diff.Add(v)
+		}
+	}
+	return diff
+}
+
+// Checks whether the set is a subset of the given set
+func (s Set[U, T]) IsSubset(other Set[U, T]) bool {
+	return len(Intersect(s, other)) == len(s)
+}
+
+// Checks whether s1 is a subset of s2
+func IsSubset[U comparable, T Hasher[U]](s1, s2 Set[U, T]) bool {
+	return s1.IsSubset(s2)
 }
