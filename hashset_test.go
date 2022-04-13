@@ -184,3 +184,41 @@ func TestIsSubset(t *testing.T) {
 	assert.True(t, IsSubset(s3, s))
 	assert.False(t, IsSubset(s, s3))
 }
+
+func TestEqual(t *testing.T) {
+	s := Set[int, *MyElement]{}
+	s.Add(&MyElement{id: 1})
+	s.Add(&MyElement{id: 2})
+	s.Add(&MyElement{id: 3})
+
+	s2 := Set[int, *MyElement]{}
+	s2.Add(&MyElement{id: 2})
+	s2.Add(&MyElement{id: 3})
+
+	s3 := Set[int, *MyElement]{}
+	s3.Add(&MyElement{id: 1})
+	s3.Add(&MyElement{id: 2})
+	s3.Add(&MyElement{id: 3})
+
+	s4 := Set[int, *MyElement]{}
+	s4.Add(&MyElement{id: 1})
+	s4.Add(&MyElement{id: 2})
+	s4.Add(&MyElement{id: 4})
+
+	empty := Set[int, *MyElement]{}
+
+	assert.False(t, empty.Equal(s))
+	assert.False(t, s.Equal(empty))
+
+	assert.False(t, s.Equal(s2))
+	assert.False(t, s2.Equal(s))
+
+	assert.False(t, s.Equal(s4))
+	assert.False(t, s4.Equal(s))
+
+	assert.True(t, s.Equal(s3))
+	assert.True(t, s3.Equal(s))
+
+	assert.True(t, Equal(s, s3))
+	assert.False(t, Equal(s, s2))
+}

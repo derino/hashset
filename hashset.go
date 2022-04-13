@@ -120,3 +120,21 @@ func (s Set[U, T]) IsSubset(other Set[U, T]) bool {
 func IsSubset[U comparable, T Hasher[U]](s1, s2 Set[U, T]) bool {
 	return s1.IsSubset(s2)
 }
+
+func (s Set[U, T]) Equal(other Set[U, T]) bool {
+	if len(s) != len(other) {
+		return false
+	}
+	for k := range s {
+		_, ok := other[k]
+		if !ok {
+			return false
+		}
+	}
+
+	return true
+}
+
+func Equal[U comparable, T Hasher[U]](s1, s2 Set[U, T]) bool {
+	return s1.Equal(s2)
+}
