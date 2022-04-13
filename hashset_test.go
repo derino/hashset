@@ -158,7 +158,7 @@ func TestDifference(t *testing.T) {
 	assert.True(t, s.Has(&MyElement{id: 2}))
 }
 
-func TestIsSubset(t *testing.T) {
+func TestIsSubsetAndIsSuperset(t *testing.T) {
 	s := Set[int, *MyElement]{}
 	s.Add(&MyElement{id: 1})
 	s.Add(&MyElement{id: 2})
@@ -175,14 +175,56 @@ func TestIsSubset(t *testing.T) {
 	empty := Set[int, *MyElement]{}
 
 	assert.True(t, empty.IsSubset(s))
+	assert.False(t, s.IsSubset(empty))
+	assert.False(t, empty.IsSuperset(s))
+	assert.True(t, s.IsSuperset(empty))
+
 	assert.True(t, s.IsSubset(s))
+	assert.True(t, s.IsSuperset(s))
+
 	assert.False(t, s.IsSubset(s2))
 	assert.False(t, s2.IsSubset(s))
+	assert.False(t, s.IsSuperset(s2))
+	assert.False(t, s2.IsSuperset(s))
+
 	assert.True(t, s3.IsSubset(s))
 	assert.False(t, s.IsSubset(s3))
+	assert.True(t, s.IsSuperset(s3))
+	assert.False(t, s3.IsSuperset(s))
 
 	assert.True(t, IsSubset(s3, s))
 	assert.False(t, IsSubset(s, s3))
+	assert.True(t, IsSuperset(s, s3))
+	assert.False(t, IsSuperset(s3, s))
+}
+
+func TestIsDisjoint(t *testing.T) {
+	s := Set[int, *MyElement]{}
+	s.Add(&MyElement{id: 1})
+	s.Add(&MyElement{id: 2})
+	s.Add(&MyElement{id: 3})
+
+	s2 := Set[int, *MyElement]{}
+	s2.Add(&MyElement{id: 4})
+	s2.Add(&MyElement{id: 3})
+
+	s3 := Set[int, *MyElement]{}
+	s3.Add(&MyElement{id: 5})
+	s3.Add(&MyElement{id: 6})
+
+	empty := Set[int, *MyElement]{}
+
+	assert.True(t, empty.IsDisjoint(s))
+	assert.True(t, s.IsDisjoint(empty))
+	assert.False(t, s.IsDisjoint(s))
+
+	assert.False(t, s.IsDisjoint(s2))
+	assert.False(t, s2.IsDisjoint(s))
+	assert.True(t, s3.IsDisjoint(s))
+	assert.True(t, s.IsDisjoint(s3))
+
+	assert.False(t, IsDisjoint(s, s2))
+	assert.True(t, IsDisjoint(s, s3))
 }
 
 func TestEqual(t *testing.T) {

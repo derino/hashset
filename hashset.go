@@ -51,14 +51,14 @@ func (s Set[U, T]) Clone() Set[U, T] {
 	return clone
 }
 
-// Update the set by taking the union with the given set
+// Update the set by taking the union with the other set
 func (s Set[U, T]) Union(other Set[U, T]) {
 	for _, v := range other {
 		s.Add(v)
 	}
 }
 
-// Compute the union of the given two sets
+// Compute the union of s1 and s2
 func Union[U comparable, T Hasher[U]](s1, s2 Set[U, T]) Set[U, T] {
 	union := s1.Clone()
 	for _, v := range s2 {
@@ -67,7 +67,7 @@ func Union[U comparable, T Hasher[U]](s1, s2 Set[U, T]) Set[U, T] {
 	return union
 }
 
-// Update the set by taking the intersection with the given set
+// Update the set by taking the intersection with the other set
 func (s Set[U, T]) Intersect(other Set[U, T]) {
 	for k, v := range s {
 		_, ok := other[k]
@@ -77,7 +77,7 @@ func (s Set[U, T]) Intersect(other Set[U, T]) {
 	}
 }
 
-// Compute the intersection of the given two sets
+// Compute the intersection of s1 and s2
 func Intersect[U comparable, T Hasher[U]](s1, s2 Set[U, T]) Set[U, T] {
 	intersection := Set[U, T]{}
 	for k, v := range s1 {
@@ -89,7 +89,7 @@ func Intersect[U comparable, T Hasher[U]](s1, s2 Set[U, T]) Set[U, T] {
 	return intersection
 }
 
-// Update the set by taking the difference with the given set
+// Update the set by taking the difference with the other set
 func (s Set[U, T]) Difference(other Set[U, T]) {
 	for k, v := range s {
 		_, ok := other[k]
@@ -99,7 +99,7 @@ func (s Set[U, T]) Difference(other Set[U, T]) {
 	}
 }
 
-// Compute the difference of the first set from the second one
+// Compute the difference of s1 from s2
 func Difference[U comparable, T Hasher[U]](s1, s2 Set[U, T]) Set[U, T] {
 	diff := Set[U, T]{}
 	for k, v := range s1 {
@@ -111,7 +111,7 @@ func Difference[U comparable, T Hasher[U]](s1, s2 Set[U, T]) Set[U, T] {
 	return diff
 }
 
-// Checks whether the set is a subset of the given set
+// Checks whether the set is a subset of the other set
 func (s Set[U, T]) IsSubset(other Set[U, T]) bool {
 	return len(Intersect(s, other)) == len(s)
 }
@@ -121,6 +121,27 @@ func IsSubset[U comparable, T Hasher[U]](s1, s2 Set[U, T]) bool {
 	return s1.IsSubset(s2)
 }
 
+// Checks whether the set is a superset of the other set
+func (s Set[U, T]) IsSuperset(other Set[U, T]) bool {
+	return other.IsSubset(s)
+}
+
+// Checks whether s1 is a superset of s2
+func IsSuperset[U comparable, T Hasher[U]](s1, s2 Set[U, T]) bool {
+	return s1.IsSuperset(s2)
+}
+
+// Checks whether the set has no intersection with the other set
+func (s Set[U, T]) IsDisjoint(other Set[U, T]) bool {
+	return len(Intersect(s, other)) == 0
+}
+
+// Checks whether s1 and s2 have no intersection
+func IsDisjoint[U comparable, T Hasher[U]](s1, s2 Set[U, T]) bool {
+	return s1.IsDisjoint(s2)
+}
+
+// Checks whether s contains the same elements as the other
 func (s Set[U, T]) Equal(other Set[U, T]) bool {
 	if len(s) != len(other) {
 		return false
@@ -135,6 +156,7 @@ func (s Set[U, T]) Equal(other Set[U, T]) bool {
 	return true
 }
 
+// Checks whether s1 and s2 contain the same elements
 func Equal[U comparable, T Hasher[U]](s1, s2 Set[U, T]) bool {
 	return s1.Equal(s2)
 }
